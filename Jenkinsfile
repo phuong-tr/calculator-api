@@ -1,31 +1,29 @@
 pipeline {
-    agent {
-        docker { image 'python:3.9' }
-    }
+    agent any
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'pip3 install --user -r requirements.txt || true'
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'pytest tests > test_report.txt || true'
+                sh '~/.local/bin/pytest tests > test_report.txt || true'
             }
         }
         stage('Code Quality') {
             steps {
-                sh 'pylint app > pylint_report.txt || true'
+                sh '~/.local/bin/pylint app > pylint_report.txt || true'
             }
         }
         stage('Security Scan') {
             steps {
-                sh 'bandit -r app > bandit_report.txt || true'
+                sh '~/.local/bin/bandit -r app > bandit_report.txt || true'
             }
         }
         stage('Run API') {
             steps {
-                sh 'nohup python run.py &'
+                sh 'nohup python3 run.py &'
             }
         }
         stage('Health Check') {
